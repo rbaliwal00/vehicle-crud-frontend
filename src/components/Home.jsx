@@ -55,14 +55,15 @@ const Home = () => {
     return (
         <div className=''>
             <h2 className='mt-6  text-2xl font-black text-center'>All Vehicles</h2>
-            <div className='mt-8 w-6/12  m-auto'>
+            <div className='mt-8 w-11/12 lg:w-6/12  m-auto'>
                 <input type="text" 
                     placeholder="Search Vehicles using Chassis Number" 
-                    className="input input-bordered max-w-xs w-1/2"
+                    className="input input-bordered max-w-xs text-xs sm:text-sm w-11/12 lg:w-1/2 "
                     onChange={handleNameFilterChange} />
                 <button 
                     onClick={handleNewVehicle}
-                    className="bg-white btn float-right border-slate-300">New Vehicle
+                    className="bg-white btn text-center ml-2 mt-4 sm:mt-0 sm:float-right border-slate-300">
+                        New Vehicle
                 </button>
             </div>
             

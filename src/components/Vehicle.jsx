@@ -92,10 +92,12 @@ const Vehicle = () => {
       <div className="mx-auto p-4 mt-2">
           <button 
               onClick={handleClick}
-              className="bg-white btn float-right border-slate-300">Home
+              className="bg-white btn ml-4 md:ml-0 md:float-right border-slate-300">Home
           </button>
         <div className="md:w-4/5 lg:w-3/5 xl:w-2/5 bg-white rounded-lg m-auto shadow-xl px-10 py-3">
-          <h2 className="text-2xl font-bold text-center mb-4">Enter Vehicle Details</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-4">
+            Enter Vehicle Details
+          </h2>
           <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto">
             {inputs.map((input) => (
               <FormInput
