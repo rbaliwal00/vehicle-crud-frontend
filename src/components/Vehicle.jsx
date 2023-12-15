@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 
 import FormInput from './FormInput';
 import { inputs } from './inputs';
@@ -11,10 +10,11 @@ const KIND = ["Light", "Reefer", "Heavy"];
 
 const Vehicle = () => {
     const location = useLocation();
-    console.log(location.state)
+    const[loading, setLoading] = useState(false);
     let { id } = useParams();
     const [kind, setKind] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
+
     const[values, setValues] = useState({
         chassisNumber: '',
         registrationNumber: '',
@@ -25,6 +25,16 @@ const Vehicle = () => {
     });
     
     const navigate = useNavigate();
+
+    useEffect(() => {
+      if(!location.state){
+        navigator.geolocation.getCurrentPosition(position => {
+          setValues({...values, 
+            latitude: position.coords.latitude, 
+            longitude: position.coords.longitude});
+        });
+      }
+    }, []);
 
     useEffect(() => {
         if (location.state) {
@@ -45,24 +55,26 @@ const Vehicle = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true);
         if(location.state){
             try{
                 const res = await VehicleService.updateVehicle(location.state.chassis_number,
                      values, kind);
+                setLoading(false);
                 navigate('/');
-                console.log(res.data);
             }catch(err){
+                setLoading(false);
                 setErrorMessage(err.response.data);
             }
         }else{
             try{
                 const res = await VehicleService.createVehicle(values, kind);
+                setLoading(false);
                 navigate('/');
                 console.log(res.data);
             }catch(err){
+                setLoading(false);  
                 setErrorMessage(err.response.data)
-                console.log(err.response.data);
             }
         }
     }
@@ -77,11 +89,11 @@ const Vehicle = () => {
     }
 
     return (
-        <div className="mx-auto p-4 mt-2">
-                      <button 
-                    onClick={handleClick}
-                    className="bg-white btn float-right border-slate-300">Home
-                </button>
+      <div className="mx-auto p-4 mt-2">
+          <button 
+              onClick={handleClick}
+              className="bg-white btn float-right border-slate-300">Home
+          </button>
         <div className="md:w-4/5 lg:w-3/5 xl:w-2/5 bg-white rounded-lg m-auto shadow-xl px-10 py-3">
           <h2 className="text-2xl font-bold text-center mb-4">Enter Vehicle Details</h2>
           <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto">
@@ -106,14 +118,21 @@ const Vehicle = () => {
                 ))}
               </select>
             </div>
+            
             {errorMessage && <div className="mt-4 text-red-700">{errorMessage} </div>}
             <div className="text-center mt-6">
-              <button
+              {!loading ? <button
                 type="submit"
                 className="bg-cyan-700 text-white py-2 px-6 rounded hover:bg-cyan-600"
               >
                 Save
-              </button>
+              </button> :
+              <button
+                type="submit"
+                className="bg-cyan-700 text-white py-2 px-6 rounded hover:bg-cyan-600"
+              >
+                Loading...
+              </button>}
             </div>
           </form>
         </div>

@@ -6,6 +6,7 @@ import VehicleItem from './VehicleItem';
 const Home = () => {
     const[vehicles, setVehicles] = useState([]);
     const [filteredVehicles, setFilteredVehicles] = useState([]);
+    const[loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
     
@@ -36,6 +37,7 @@ const Home = () => {
     }
 
     const handleDelete = async (chassisNumber) => {
+        setLoading(true);
         try {
             await VehicleService.deleteVehicle(chassisNumber);
             const updatedVehicles = vehicles.filter(
@@ -43,7 +45,9 @@ const Home = () => {
             );
             setVehicles(updatedVehicles);
             setFilteredVehicles(updatedVehicles);
+            setLoading(false);
         } catch (err) {
+            setLoading(false);
             console.log(err);
         }
     };
@@ -66,6 +70,7 @@ const Home = () => {
                 <VehicleItem 
                     vehicle={vehicle} 
                     key={vehicle._id}
+                    loading={loading}
                     onDelete={() => handleDelete(vehicle.chassis_number)}/>
             ))}
         </div>
