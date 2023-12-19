@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import Skeleton from '@mui/material/Skeleton';
 import VehicleService from '../services/Vehicle.service';
 import VehicleItem from './VehicleItem';
 
 const Home = () => {
-    const[vehicles, setVehicles] = useState([]);
+    const[vehicles, setVehicles] = useState();
     const [filteredVehicles, setFilteredVehicles] = useState([]);
     const[loading, setLoading] = useState(false);
 
@@ -21,7 +22,7 @@ const Home = () => {
                 console.log(err);
             }
         }
-        getVehicles();
+        getVehicles();       
     },[]);
 
     const handleNameFilterChange = (e) => {
@@ -43,6 +44,7 @@ const Home = () => {
             const updatedVehicles = vehicles.filter(
                 (vehicle) => vehicle.chassis_number !== chassisNumber
             );
+  
             setVehicles(updatedVehicles);
             setFilteredVehicles(updatedVehicles);
             setLoading(false);
@@ -66,14 +68,21 @@ const Home = () => {
                         New Vehicle
                 </button>
             </div>
+            {vehicles ? (
+                <div>
+                    {filteredVehicles.map((vehicle) => (
+                        <VehicleItem 
+                            vehicle={vehicle} 
+                            key={vehicle._id}
+                            loading={loading}
+                            onDelete={() => handleDelete(vehicle.chassis_number)}/>
+                    ))}
+                </div>) :(
+                    <Skeleton animation="wave" variant="rectangular" height={220}
+                        className="mt-4 p-4 card w-11/12 lg:w-6/12 bg-teal-700 text-white m-auto" />
+                )
+            }
             
-            {filteredVehicles.map((vehicle) => (
-                <VehicleItem 
-                    vehicle={vehicle} 
-                    key={vehicle._id}
-                    loading={loading}
-                    onDelete={() => handleDelete(vehicle.chassis_number)}/>
-            ))}
         </div>
     );
 };
